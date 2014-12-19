@@ -138,8 +138,8 @@ plot(m2) # <- get Pic: ForestRplot_Fig2.png / *.pdf
 ![](https://github.com/Lobodzinski/Machine_Learning/blob/master/ForestRplot_Fig2.png)
 ```
 barplot(m2$importance[, 7], main = "Gini coeff")
-![](https://github.com/Lobodzinski/Machine_Learning/blob/master/GiniRplot_Fig3.png)
 ```
+![](https://github.com/Lobodzinski/Machine_Learning/blob/master/GiniRplot_Fig3.png)
 
 ##### c) The Bagging prediction model:
 ```
@@ -312,15 +312,24 @@ Forest = errorest(classe ~ ., data = testSet, model = randomForest)$error)
 
 According to the errorest the better prediction algorithm is the Forest Tree. 
 
-#### 3. what you think the expected out of sample error is, and
+#### 3. what you think the expected out of sample error is / Conclusions:
+Calculation of the confusion Matrix gives accuracy which points to the Random Forest prediction method as the best
+choice for the above task.
+However, according to the function errorest (from ipred package), the best prediction method is the Bagging.
+Using my knowledge I cannot dstinguish which method is a proper one:
+the Random Forest or the Bagging. A more sophisticated check is necessary.
+So, I can only write, that the Tree prediction method shows the largest error and should not be used in this 
+kind of analysis.
+
+It is unclear to me how to use the testing data (from
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv ).
+It cannot be added to the testSet because the column "classe" is missing, therefore we cannot compare our predictions with 
+the testing data .
 
 #### 4. why you made the choices you did.
 In terms of the selection of prediction methods, I decided to use the Random Tree and the Bagging algorithms 
 because both methods are used for analysis of the data in the source article [1]. 
 The Tree based prediction is used due to the lectures.  
-
-### Summary:
-
 
 ### References:
 [1] Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H.
