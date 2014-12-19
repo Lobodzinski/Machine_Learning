@@ -43,22 +43,27 @@ r-package: rpart
 #### 1. how you built your model,
 
 ##### a) initial seps:
-`set.seed(123456)`
-`library(caret)`
-`library(RCurl)`
+`set.seed(123456)
+
+library(caret)
+
+library(RCurl)`
 
 Download of the training and testing data:
 
-`train<-read.csv(textConnection(getURL("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv")))`
-`test<-read.csv(textConnection(getURL("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv")))`
+`train<-read.csv(textConnection(getURL("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv")))
+
+test<-read.csv(textConnection(getURL("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv")))`
 
 ##### b) Clean-up the data:
 
 ###### step 1: 
 
 using 
+
 `featurePlot(x = train[, names1], y = train$classe, plot = "pairs") `
 where names1 is a part of list of general list 
+
 `names(train)` I selected a few columns which can be removed from the train part. 
 Due to the limited RAM, I moved through all column names selecting for each check 10 column names.
 I noticed negative response in case of columns:
@@ -83,9 +88,9 @@ kurtosis_roll_dumbbell,kurtosis_picth_dumbbell,kurtosis_yaw_dumbbell,skewness_ro
 max_yaw_dumbbell,min_yaw_dumbbell,amplitude_yaw_dumbbell,kurtosis_roll_forearm,kurtosis_picth_forearm,kurtosis_yaw_forearm,skewness_roll_forearm,
 skewness_pitch_forearm,skewness_yaw_forearm,max_yaw_forearm,min_yaw_forearm,amplitude_yaw_forearm))`
 
-`dim(train2)`
+dim(train2)
 
-`19622    53`
+19622    53`
 
 ##### c) splitting the data:
 
@@ -93,9 +98,13 @@ training set: trainSet=60 %;
 test set: testSet=40 %;
 
 `inTrain <- createDataPartition(y=train$classe, p=0.6, list=FALSE)
+
 trainSet <- train1[inTrain, ]
+
 testSet <- train1[-inTrain, ]
+
 dim(trainSet)
+
 dim(testSet)`
 
 
@@ -108,8 +117,11 @@ Having all outputs I compare predictions.
 ##### a) Tree-based prediction mode:
 
 `library(rpart)
+
 m1 <- rpart(classe ~ ., data = trainSet)
+
 library(rattle)
+
 fancyRpartPlot(m1)`
 
 The plot: 
