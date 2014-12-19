@@ -1,6 +1,3 @@
----
-output: html_document
----
 ### Introduction:
 
 Author: 		Bogdan Lobodzinski
@@ -26,10 +23,8 @@ The data can be also find in the source of the project: http://groupware.les.inf
 
 
 ### Tools:
-according to the article: 
-"Qualitative Activity Recognition of Weight Lifting Exercises" (Eduardo Velloso,
-Andreas Bulling, Hans Gellersen, Wallace Ugulino & Hugo Fuks)
-available on the URL: http://groupware.les.inf.puc-rio.br/har I use: 
+
+For analysis of the data [1] I use:
 
 A) Tree-based prediction method (CART)
 r-package: rpart
@@ -129,7 +124,6 @@ m1 <- rpart(classe ~ ., data = trainSet)
 library(rattle)
 fancyRpartPlot(m1)
 ```
-The plot:
 ![](https://github.com/Lobodzinski/Machine_Learning/blob/master/TreeRplot_Fig1.png)
 
 ##### b) The Random Forest prediction model:
@@ -245,8 +239,8 @@ So, I got:
 ```
 		Accuracy:	
 
-Tree  :         0.7605
-Forest:		0.991
+Tree	:	0.7605
+Forest	:	0.991
 ```
 
 The Random Forest method is more reliable then the Tree-based algorithm. Therefore for the 
@@ -263,7 +257,7 @@ Levels: A B C D E
 ##### Wrinting result to the files:
 
 on the Linux OS I used the following way. 
-``
+```
 pml_write_files = function(x){
      n = length(x)
      for(i in 1:n){
@@ -273,7 +267,7 @@ pml_write_files = function(x){
 }
  
 pml_write_files(forestFit)
-``
+```
 
 After creation of files, removal of a new line sign inside each file is necessary.
 It can be done using `zsh` loop:
@@ -297,5 +291,6 @@ In addition, the Random Forest method is used for the alalysis in the source art
 [1] Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H.
 "Qualitative Activity Recognition of Weight Lifting Exercises."
 Proceedings of 4th International Conference in Cooperation with SIGCHI (Augmented Human '13) . Stuttgart, Germany: ACM SIGCHI, 2013.
+(available on http://groupware.les.inf.puc-rio.br/har)
 
 
