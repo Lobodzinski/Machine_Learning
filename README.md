@@ -43,17 +43,18 @@ r-package: rpart
 #### 1. how you built your model,
 
 ##### a) initial seps:
-`set.seed(123456)
-
+```
+set.seed(123456)
 library(caret)
-
-library(RCurl)`
+library(RCurl)
+```
 
 Download of the training and testing data:
 
-`train<-read.csv(textConnection(getURL("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv")))
-
-test<-read.csv(textConnection(getURL("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv")))`
+```
+train<-read.csv(textConnection(getURL("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv")))
+test<-read.csv(textConnection(getURL("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv")))
+```
 
 ##### b) Clean-up the data:
 
@@ -82,30 +83,28 @@ check NearZeroVariance variables:
 
 I selected all columns with `nzv=TRUE` and removed from the train set:
 
-`train2<-subset(train1, select=-c(kurtosis_roll_belt,kurtosis_picth_belt,kurtosis_yaw_belt,skewness_roll_belt,skewness_roll_belt.1,skewness_yaw_belt,max_yaw_belt,
+```
+train2<-subset(train1, select=-c(kurtosis_roll_belt,kurtosis_picth_belt,kurtosis_yaw_belt,skewness_roll_belt,skewness_roll_belt.1,skewness_yaw_belt,max_yaw_belt,
 min_yaw_belt,amplitude_yaw_belt,kurtosis_roll_arm,kurtosis_picth_arm,kurtosis_yaw_arm,skewness_roll_arm,skewness_pitch_arm,skewness_yaw_arm,
 kurtosis_roll_dumbbell,kurtosis_picth_dumbbell,kurtosis_yaw_dumbbell,skewness_roll_dumbbell,skewness_pitch_dumbbell,skewness_yaw_dumbbell,
 max_yaw_dumbbell,min_yaw_dumbbell,amplitude_yaw_dumbbell,kurtosis_roll_forearm,kurtosis_picth_forearm,kurtosis_yaw_forearm,skewness_roll_forearm,
 skewness_pitch_forearm,skewness_yaw_forearm,max_yaw_forearm,min_yaw_forearm,amplitude_yaw_forearm))`
-
 dim(train2)
-
-19622    53`
+[1] 19622    53
+```
 
 ##### c) splitting the data:
 
 training set: trainSet=60 %; 
 test set: testSet=40 %;
 
-`inTrain <- createDataPartition(y=train$classe, p=0.6, list=FALSE)
-
+```
+inTrain <- createDataPartition(y=train$classe, p=0.6, list=FALSE)
 trainSet <- train1[inTrain, ]
-
 testSet <- train1[-inTrain, ]
-
 dim(trainSet)
-
-dim(testSet)`
+dim(testSet)
+```
 
 
 #### 2. how you used cross validation:
@@ -116,13 +115,12 @@ Having all outputs I compare predictions.
 
 ##### a) Tree-based prediction mode:
 
-`library(rpart)
-
+```
+library(rpart)
 m1 <- rpart(classe ~ ., data = trainSet)
-
 library(rattle)
-
-fancyRpartPlot(m1)`
+fancyRpartPlot(m1)
+```
 
 The plot: 
 ![Settings Window](https://github.com/Lobodzinski/Machine_Lerning/TreeRplot_Fig1.png)
