@@ -1,3 +1,6 @@
+---
+output: html_document
+---
 ### Introduction:
 
 Author: 		Bogdan Lobodzinski
@@ -26,22 +29,16 @@ The data can be also find in the source of the project: http://groupware.les.inf
 according to the article: 
 "Qualitative Activity Recognition of Weight Lifting Exercises" (Eduardo Velloso,
 Andreas Bulling, Hans Gellersen, Wallace Ugulino & Hugo Fuks)
-available on the URL: http://groupware.les.inf.puc-rio.br/har 
-we use: 
+available on the URL: http://groupware.les.inf.puc-rio.br/har I use: 
 
-A) Random Forest approach 
+A) Tree-based prediction method (CART)
+r-package: rpart
+
+B) Random Forest approach 
 - for description with references therin: http://en.wikipedia.org/wiki/Random_forest,
 - examples of application in r language: 
 r-package: 	http://cran.r-project.org/web/packages/randomForest/index.html,
 examples: 	http://www.statmethods.net/advstats/cart.html
-
-B) Bootstrap aggregating (bagging) method
-r-package:	http://www.inside-r.org/packages/cran/ipred/docs/bagging
-examples:	http://www.vikparuchuri.com/blog/intro-to-ensemble-learning-in-r/
-
-C) Tree-based prediction method (CART)
-r-package: rpart
-
 
 ### Analysis:
 #### 1. how you built your model,
@@ -77,7 +74,10 @@ I noticed negative response in case of columns:
 
 The removal of unrelevant column is:
 
-`train1<-subset(train, select=-c(X,user_name,raw_timestamp_part_1,raw_timestamp_part_2,cvtd_timestamp,new_window,num_window))`
+```
+train1<-subset(train, select=-c(X,user_name,raw_timestamp_part_1,raw_timestamp_part_2,cvtd_timestamp,new_window,num_window))
+test1<-subset(test, select=-c(X,user_name,raw_timestamp_part_1,raw_timestamp_part_2,cvtd_timestamp,new_window,num_window))
+````
 
 ###### step 2:
 
@@ -95,6 +95,14 @@ max_yaw_dumbbell,min_yaw_dumbbell,amplitude_yaw_dumbbell,kurtosis_roll_forearm,k
 skewness_pitch_forearm,skewness_yaw_forearm,max_yaw_forearm,min_yaw_forearm,amplitude_yaw_forearm))`
 dim(train2)
 [1] 19622    53
+
+test2<-subset(test1, select=-c(kurtosis_roll_belt,kurtosis_picth_belt,kurtosis_yaw_belt,skewness_roll_belt,skewness_roll_belt.1,skewness_yaw_belt,max_yaw_belt,
+min_yaw_belt,amplitude_yaw_belt,kurtosis_roll_arm,kurtosis_picth_arm,kurtosis_yaw_arm,skewness_roll_arm,skewness_pitch_arm,skewness_yaw_arm,
+kurtosis_roll_dumbbell,kurtosis_picth_dumbbell,kurtosis_yaw_dumbbell,skewness_roll_dumbbell,skewness_pitch_dumbbell,skewness_yaw_dumbbell,
+max_yaw_dumbbell,min_yaw_dumbbell,amplitude_yaw_dumbbell,kurtosis_roll_forearm,kurtosis_picth_forearm,kurtosis_yaw_forearm,skewness_roll_forearm,
+skewness_pitch_forearm,skewness_yaw_forearm,max_yaw_forearm,min_yaw_forearm,amplitude_yaw_forearm))`
+
+dim(test2)
 ```
 
 ##### c) splitting the data:
@@ -111,11 +119,7 @@ dim(testSet)
 ```
 
 
-#### 2. how you used cross validation:
-
-The first prediction method (Tree based) is used as a main algorithm.
-The cross-validation is performed using the Random Forest and the bagging methods. 
-Having all outputs I compare predictions.
+#### 2. Predictions / how you used cross validation:
 
 ##### a) The Tree-based prediction model:
 
@@ -125,89 +129,82 @@ m1 <- rpart(classe ~ ., data = trainSet)
 library(rattle)
 fancyRpartPlot(m1)
 ```
-
-The plot: 
+The plot:
 ![](https://github.com/Lobodzinski/Machine_Learning/blob/master/TreeRplot_Fig1.png)
 
 ##### b) The Random Forest prediction model:
-```
-library(randomForest)
-m2 <- randomForest(classe ~ ., data = trainSet, importance = T)
-m2
-plot(m2)
-```
-![](https://github.com/Lobodzinski/Machine_Learning/blob/master/ForestRplot_Fig2.png)
-
-The plot above shows the out-of-bag error vs number of trees.
-
-
-##### c) The Bagging prediction model:
-```
-library(ipred)
-m3 <- bagging(classe ~ ., data = train2, coob = T)
-print(m3)
-
-Bagging classification trees with 25 bootstrap replications 
-
-Call: bagging.data.frame(formula = classe ~ ., data = train2, coob = T)
-
-Out-of-bag estimate of misclassification error:  0.0145 
+The 5-fold cross-validation is performed for the Random Forest prediction method
+(http://topepo.github.io/caret/training.html).
 
 ```
-##### d) Comparison of the prediction methods: 
+fitControl <- trainControl(## 5-fold CV
+                           method = "repeatedcv",
+                           number = 5,
+                           ## repeated ten times
+                           repeats = 5)
+
+m2 <- train(classe ~ ., data = trainSet,
+                 method = "rf",
+                 trControl = fitControl,
+                 verbose = FALSE)
+```
+
+##### c) Comparison of the prediction methods:
+
+I compare both prediction method using `confusionMatrix`.
+
+For the Tree-based prediction algorithm:
 ```
 Tree <- predict(m1, testSet, type = "class")
-Forest <- predict(m2, testSet)
-Bagging <- predict(m3, testSet)
-```
+table(testSet$classe, Tree)
 
-For comparison one can use the `confusionMatrix` and 
-the function `errorest` (from `ipred` package). In the last case be patient, 
-the `errorest` is a very long time consuming process. I show both error estimations.
+   Tree
+       A    B    C    D    E
+  A 2031   79   65   25   32
+  B  212  960  139  138   69
+  C   21  107 1112   88   40
+  D   68   94  214  830   80
+  E   19  140  168   81 1034
 
-###### confusionMatrix:
-
-for the Tree-based method: 
-```
-treeconf<-confusionMatrix(Tree, testSet$classe)
-treeconf
+Treeconf<-confusionMatrix(Tree, testSet$classe)
+Treeconf
 
 Confusion Matrix and Statistics
 
           Reference
 Prediction    A    B    C    D    E
-         A 2024  256   82  151   52
-         B   71  923  148  116  144
-         C   69  169 1039  191  161
-         D   45  141   99  722   79
-         E   23   29    0  106 1006
+         A 2031  212   21   68   19
+         B   79  960  107   94  140
+         C   65  139 1112  214  168
+         D   25  138   88  830   81
+         E   32   69   40   80 1034
 
 Overall Statistics
-
-               Accuracy : 0.7283
-                 95% CI : (0.7183, 0.7381)
-    No Information Rate : 0.2845
-    P-Value [Acc > NIR] : < 2.2e-16
-
-                  Kappa : 0.6544
- Mcnemar's Test P-Value : < 2.2e-16
+                                          
+               Accuracy : 0.7605          
+                 95% CI : (0.7509, 0.7699)
+    No Information Rate : 0.2845          
+    P-Value [Acc > NIR] : < 2.2e-16       
+                                          
+                  Kappa : 0.6966          
+ Mcnemar's Test P-Value : < 2.2e-16       
 
 Statistics by Class:
 
                      Class: A Class: B Class: C Class: D Class: E
-Sensitivity            0.9068   0.6080   0.7595  0.56143   0.6976
-Specificity            0.9036   0.9243   0.9089  0.94451   0.9753
-Pos Pred Value         0.7891   0.6583   0.6378  0.66483   0.8643
-Neg Pred Value         0.9606   0.9077   0.9471  0.91657   0.9348
-Prevalence             0.2845   0.1935   0.1744  0.16391   0.1838
-Detection Rate         0.2580   0.1176   0.1324  0.09202   0.1282
-Detection Prevalence   0.3269   0.1787   0.2076  0.13841   0.1484
-Balanced Accuracy      0.9052   0.7662   0.8342  0.75297   0.8365
-
-``` 
-
-for the Random Forest method:
+Sensitivity            0.9099   0.6324   0.8129   0.6454   0.7171
+Specificity            0.9430   0.9336   0.9095   0.9494   0.9655
+Pos Pred Value         0.8639   0.6957   0.6549   0.7143   0.8239
+Neg Pred Value         0.9634   0.9137   0.9584   0.9318   0.9381
+Prevalence             0.2845   0.1935   0.1744   0.1639   0.1838
+Detection Rate         0.2589   0.1224   0.1417   0.1058   0.1318
+Detection Prevalence   0.2996   0.1759   0.2164   0.1481   0.1600
+Balanced Accuracy      0.9265   0.7830   0.8612   0.7974   0.8413
 ```
+
+In case of the Random Forest method:
+```
+Forest <- predict(m2, testSet)
 forestconf<-confusionMatrix(Forest, testSet$classe)
 forestconf
 
@@ -215,121 +212,86 @@ Confusion Matrix and Statistics
 
           Reference
 Prediction    A    B    C    D    E
-         A 2232    9    0    0    0
-         B    0 1505    8    0    0
-         C    0    4 1359   23    2
-         D    0    0    1 1263    2
-         E    0    0    0    0 1438
+         A 2231   16    0    0    1
+         B    1 1497    8    0    2
+         C    0    5 1351   22    4
+         D    0    0    9 1264    3
+         E    0    0    0    0 1432
 
 Overall Statistics
-
-               Accuracy : 0.9938
-                 95% CI : (0.9918, 0.9954)
-    No Information Rate : 0.2845
-    P-Value [Acc > NIR] : < 2.2e-16
-
-                  Kappa : 0.9921
- Mcnemar's Test P-Value : NA
+                                          
+               Accuracy : 0.991           
+                 95% CI : (0.9886, 0.9929)
+    No Information Rate : 0.2845          
+    P-Value [Acc > NIR] : < 2.2e-16       
+                                          
+                  Kappa : 0.9886          
+ Mcnemar's Test P-Value : NA              
 
 Statistics by Class:
 
                      Class: A Class: B Class: C Class: D Class: E
-Sensitivity            1.0000   0.9914   0.9934   0.9821   0.9972
-Specificity            0.9984   0.9987   0.9955   0.9995   1.0000
-Pos Pred Value         0.9960   0.9947   0.9791   0.9976   1.0000
-Neg Pred Value         1.0000   0.9979   0.9986   0.9965   0.9994
+Sensitivity            0.9996   0.9862   0.9876   0.9829   0.9931
+Specificity            0.9970   0.9983   0.9952   0.9982   1.0000
+Pos Pred Value         0.9924   0.9927   0.9776   0.9906   1.0000
+Neg Pred Value         0.9998   0.9967   0.9974   0.9967   0.9984
 Prevalence             0.2845   0.1935   0.1744   0.1639   0.1838
-Detection Rate         0.2845   0.1918   0.1732   0.1610   0.1833
-Detection Prevalence   0.2856   0.1928   0.1769   0.1614   0.1833
-Balanced Accuracy      0.9992   0.9951   0.9945   0.9908   0.9986
-
+Detection Rate         0.2843   0.1908   0.1722   0.1611   0.1825
+Detection Prevalence   0.2865   0.1922   0.1761   0.1626   0.1825
+Balanced Accuracy      0.9983   0.9922   0.9914   0.9905   0.9965
 ```
 
-for the Bagging method:
-```
-baggingconf<-confusionMatrix(Bagging, testSet$classe)
-baggingconf
-
-Confusion Matrix and Statistics
-          Reference
-Prediction    A    B    C    D    E
-         A 2232    0    0    0    0
-         B    0 1518    0    0    0
-         C    0    0 1368    3    2
-         D    0    0    0 1283    0
-         E    0    0    0    0 1440
-
-Overall Statistics
-
-               Accuracy : 0.9994
-                 95% CI : (0.9985, 0.9998)
-    No Information Rate : 0.2845
-    P-Value [Acc > NIR] : < 2.2e-16
-
-                  Kappa : 0.9992
- Mcnemar's Test P-Value : NA
-
-Statistics by Class:
-
-                     Class: A Class: B Class: C Class: D Class: E
-Sensitivity            1.0000   1.0000   1.0000   0.9977   0.9986
-Specificity            1.0000   1.0000   0.9992   1.0000   1.0000
-Pos Pred Value         1.0000   1.0000   0.9964   1.0000   1.0000
-Neg Pred Value         1.0000   1.0000   1.0000   0.9995   0.9997
-Prevalence             0.2845   0.1935   0.1744   0.1639   0.1838
-Detection Rate         0.2845   0.1935   0.1744   0.1635   0.1835
-Detection Prevalence   0.2845   0.1935   0.1750   0.1635   0.1835
-Balanced Accuracy      1.0000   1.0000   0.9996   0.9988   0.9993
-
-```
-So, we have:
+So, I got:
 ```
 		Accuracy:	
 
-Tree:		0.7283
-Forest:		0.9938
-Bagging:	0.9994
+Tree  :         0.7605
+Forest:		0.991
 ```
 
-According to the `confusionMatrix`, the best prediction method is the `Bagging`. 
-
-###### errorest:
-
-The check is started as:
+The Random Forest method is more reliable then the Tree-based algorithm. Therefore for the 
+submission part of the project I will use the The Random Forest method.
+Results based on the test data:
 ```
-mypredict.rpart <- function(object, newdata) 
-{
-	predict(object, newdata = newdata, type = "class")
+forestFit <- predict(m2$finalModel, newdata = test2)
+forestFit
+ 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 
+ B  A  B  A  A  E  D  B  A  A  B  C  B  A  E  E  A  B  B  B 
+Levels: A B C D E
+```
+
+##### Wrinting result to the files:
+
+on the Linux OS I used the following way. 
+``
+pml_write_files = function(x){
+     n = length(x)
+     for(i in 1:n){
+         filename = paste0("submission/problem_id_",i,".txt")
+         write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+     }
 }
+ 
+pml_write_files(forestFit)
+``
 
-errorestRes<-c(Tree = errorest(classe ~ ., data = testSet, model = rpart, predict = mypredict.rpart)$error,
-Bagging = errorest(classe ~ ., data = testSet, model = bagging)$error,
-Forest = errorest(classe ~ ., data = testSet, model = randomForest)$error)
+After creation of files, removal of a new line sign inside each file is necessary.
+It can be done using `zsh` loop:
 
-      Tree    Bagging     Forest
-0.24751466 0.02702014 0.01261789
 ```
-
-According to the `errorest` the better prediction algorithm is the `Forest Tree`. 
+foreach i (`ls`)
+echo $i
+perl -i -pe 's/\n//g' $i
+end
+```
+The size of each file `problem_id_*.txt` should be 1 . 
 
 #### 3. what you think the expected out of sample error is / Conclusions:
-Calculation of the `confusion Matrix` gives accuracy which points to the `Random Forest` prediction method as the best
-choice for the above task.
-However, according to the function `errorest`, the best prediction method is the `Bagging`.
-Using my knowledge I cannot distinguish which method is a proper one:
-the Random Forest or the Bagging. A more sophisticated check is necessary.
-So, I can only write, that the `Tree` prediction method shows the largest error and should not be used in this 
-kind of analysis.
-
-It is unclear to me how to use the testing data (from
-https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv ).
-It cannot be added to the testSet because the column "classe" is missing, therefore we cannot compare our predictions with 
-the testing data .
+The Random Forests prediction method generates better results then the Tree-based algorithm.
 
 #### 4. why you made the choices you did.
-In terms of the selection of prediction methods, I decided to use the Random Tree and the Bagging algorithms 
-because both methods are used for analysis of the data in the source article [1]. 
-The Tree based prediction is used due to the lectures.  
+The Tree-based and the Random Forest prediction algorithms are more or less described in available lectures. 
+In addition, the Random Forest method is used for the alalysis in the source article [1]. 
 
 ### References:
 [1] Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H.
