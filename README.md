@@ -133,7 +133,7 @@ The plot:
 library(randomForest)
 m2 <- randomForest(classe ~ ., data = trainSet, importance = T)
 m2
-plot(m2) # <- get Pic: ForestRplot_Fig2.png / *.pdf
+plot(m2)
 ```
 ![](https://github.com/Lobodzinski/Machine_Learning/blob/master/ForestRplot_Fig2.png)
 ```
@@ -316,7 +316,7 @@ According to the errorest the better prediction algorithm is the Forest Tree.
 Calculation of the confusion Matrix gives accuracy which points to the Random Forest prediction method as the best
 choice for the above task.
 However, according to the function errorest (from ipred package), the best prediction method is the Bagging.
-Using my knowledge I cannot dstinguish which method is a proper one:
+Using my knowledge I cannot distinguish which method is a proper one:
 the Random Forest or the Bagging. A more sophisticated check is necessary.
 So, I can only write, that the Tree prediction method shows the largest error and should not be used in this 
 kind of analysis.
