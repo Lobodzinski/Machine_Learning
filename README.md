@@ -1,5 +1,8 @@
 ### 1. Introduction:
 
+Author: 		Bogdan Lobodzinski
+GitHub repo:		https://github.com/Lobodzinski/Machine_Learning
+
 description of the project:
 Project is a part of the exercises for the course: Practical Machine Learning from Johns Hopkins University
 provided by: Jeff Leek, PhD, Roger D. Peng, PhD, Brian Caffo, PhD
@@ -123,7 +126,7 @@ fancyRpartPlot(m1)
 ```
 
 The plot: 
-![Settings Window](https://github.com/Lobodzinski/Machine_Lerning/TreeRplot_Fig1.png)
+![](https://github.com/Lobodzinski/Machine_Learning/blob/master/TreeRplot_Fig1.png)
 
 #### 3. what you think the expected out of sample error is, and
 
