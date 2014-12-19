@@ -136,10 +136,9 @@ m2
 plot(m2)
 ```
 ![](https://github.com/Lobodzinski/Machine_Learning/blob/master/ForestRplot_Fig2.png)
-```
-barplot(m2$importance[, 7], main = "Gini coeff")
-```
-![](https://github.com/Lobodzinski/Machine_Learning/blob/master/GiniRplot_Fig3.png)
+
+The plot above shows the out-of-bag error vs number of trees.
+
 
 ##### c) The Bagging prediction model:
 ```
