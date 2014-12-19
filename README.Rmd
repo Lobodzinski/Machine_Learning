@@ -126,7 +126,6 @@ m1 <- rpart(classe ~ ., data = trainSet)
 library(rattle)
 fancyRpartPlot(m1)
 ```
-The plot:
 ![](https://github.com/Lobodzinski/Machine_Learning/blob/master/TreeRplot_Fig1.png)
 
 ##### b) The Random Forest prediction model:
@@ -242,8 +241,8 @@ So, I got:
 ```
 		Accuracy:	
 
-Tree  :         0.7605
-Forest:		0.991
+Tree	:	0.7605
+Forest	:	0.991
 ```
 
 The Random Forest method is more reliable then the Tree-based algorithm. Therefore for the 
@@ -260,7 +259,7 @@ Levels: A B C D E
 ##### Wrinting result to the files:
 
 on the Linux OS I used the following way. 
-``
+```
 pml_write_files = function(x){
      n = length(x)
      for(i in 1:n){
@@ -270,7 +269,7 @@ pml_write_files = function(x){
 }
  
 pml_write_files(forestFit)
-``
+```
 
 After creation of files, removal of a new line sign inside each file is necessary.
 It can be done using `zsh` loop:
