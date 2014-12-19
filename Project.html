@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
+
+
+
+
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+</style>
+
+
+
+</head>
+
+<body>
+<h3>Introduction:</h3>
+
+<p>Author:         Bogdan Lobodzinski <br>
+GitHub repo:        <a href="https://github.com/Lobodzinski/Machine_Learning">https://github.com/Lobodzinski/Machine_Learning</a></p>
+
+<p>description of the project:
+Project is a part of the exercises for the course: Practical Machine Learning from Johns Hopkins University
+provided by: Jeff Leek, PhD, Roger D. Peng, PhD, Brian Caffo, PhD <br>
+Detailed description of the task one can find on the URL:<br>
+<a href="https://class.coursera.org/predmachlearn-016/human_grading/view/courses/973763/assessments/4/submissions">https://class.coursera.org/predmachlearn-016/human_grading/view/courses/973763/assessments/4/submissions</a></p>
+
+<p>Detailed description of the project the reader can find in the work [1]</p>
+
+<h4>Access to the data:</h4>
+
+<p>The URL to the training data:<br>
+<a href="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv">https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv</a><br>
+The URL to the test data:<br>
+<a href="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv">https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv</a></p>
+
+<p>The data can be also find in the source of the project: <a href="http://groupware.les.inf.puc-rio.br/har">http://groupware.les.inf.puc-rio.br/har</a>.</p>
+
+<h3>Tools:</h3>
+
+<p>according to the article: 
+&ldquo;Qualitative Activity Recognition of Weight Lifting Exercises&rdquo; (Eduardo Velloso,
+Andreas Bulling, Hans Gellersen, Wallace Ugulino &amp; Hugo Fuks)
+available on the URL: <a href="http://groupware.les.inf.puc-rio.br/har">http://groupware.les.inf.puc-rio.br/har</a> 
+we use: </p>
+
+<p>A) Random Forest approach </p>
+
+<ul>
+<li>for description with references therin: <a href="http://en.wikipedia.org/wiki/Random_forest">http://en.wikipedia.org/wiki/Random_forest</a>,</li>
+<li>examples of application in r language: 
+r-package:  <a href="http://cran.r-project.org/web/packages/randomForest/index.html">http://cran.r-project.org/web/packages/randomForest/index.html</a>,
+examples:   <a href="http://www.statmethods.net/advstats/cart.html">http://www.statmethods.net/advstats/cart.html</a></li>
+</ul>
+
+<p>B) Bootstrap aggregating (bagging) method
+r-package:  <a href="http://www.inside-r.org/packages/cran/ipred/docs/bagging">http://www.inside-r.org/packages/cran/ipred/docs/bagging</a>
+examples:   <a href="http://www.vikparuchuri.com/blog/intro-to-ensemble-learning-in-r/">http://www.vikparuchuri.com/blog/intro-to-ensemble-learning-in-r/</a></p>
+
+<p>C) Tree-based prediction method (CART)
+r-package: rpart</p>
+
+<h3>Analysis:</h3>
+
+<h4>1. how you built your model,</h4>
+
+<h5>a) initial seps:</h5>
+
+<pre><code>set.seed(123456)
+library(caret)
+library(RCurl)
+</code></pre>
+
+<p>Download of the training and testing data:</p>
+
+<pre><code>train&lt;-read.csv(textConnection(getURL(&quot;https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv&quot;)))
+test&lt;-read.csv(textConnection(getURL(&quot;https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv&quot;)))
+</code></pre>
+
+<h5>b) Clean-up the data:</h5>
+
+<h6>step 1:</h6>
+
+<p>using </p>
+
+<p><code>featurePlot(x = train[, names1], y = train$classe, plot = &quot;pairs&quot;)</code>
+where names1 is a part of list of general list </p>
+
+<p><code>names(train)</code> I selected a few columns which can be removed from the train part. 
+Due to the limited RAM, I moved through all column names selecting for each check 10 column names.
+I noticed negative response in case of columns:</p>
+
+<p><code>c(X,user_name,raw_timestamp_part_1,raw_timestamp_part_2,cvtd_timestamp,new_window,num_window))</code></p>
+
+<p>The removal of unrelevant column is:</p>
+
+<p><code>train1&lt;-subset(train, select=-c(X,user_name,raw_timestamp_part_1,raw_timestamp_part_2,cvtd_timestamp,new_window,num_window))</code></p>
+
+<h6>step 2:</h6>
+
+<p>check NearZeroVariance variables: </p>
+
+<p><code>nearZeroVar(train1, saveMetrics=TRUE)</code></p>
+
+<p>I selected all columns with <code>nzv=TRUE</code> and removed from the train set:</p>
+
+<pre><code>train2&lt;-subset(train1, select=-c(kurtosis_roll_belt,kurtosis_picth_belt,kurtosis_yaw_belt,skewness_roll_belt,skewness_roll_belt.1,skewness_yaw_belt,max_yaw_belt,
+min_yaw_belt,amplitude_yaw_belt,kurtosis_roll_arm,kurtosis_picth_arm,kurtosis_yaw_arm,skewness_roll_arm,skewness_pitch_arm,skewness_yaw_arm,
+kurtosis_roll_dumbbell,kurtosis_picth_dumbbell,kurtosis_yaw_dumbbell,skewness_roll_dumbbell,skewness_pitch_dumbbell,skewness_yaw_dumbbell,
+max_yaw_dumbbell,min_yaw_dumbbell,amplitude_yaw_dumbbell,kurtosis_roll_forearm,kurtosis_picth_forearm,kurtosis_yaw_forearm,skewness_roll_forearm,
+skewness_pitch_forearm,skewness_yaw_forearm,max_yaw_forearm,min_yaw_forearm,amplitude_yaw_forearm))`
+dim(train2)
+[1] 19622    53
+</code></pre>
+
+<h5>c) splitting the data:</h5>
+
+<p>training set: trainSet=60 %; 
+test set: testSet=40 %;</p>
+
+<pre><code>inTrain &lt;- createDataPartition(y=train$classe, p=0.6, list=FALSE)
+trainSet &lt;- train1[inTrain, ]
+testSet &lt;- train1[-inTrain, ]
+dim(trainSet)
+dim(testSet)
+</code></pre>
+
+<h4>2. how you used cross validation:</h4>
+
+<p>The first prediction method (Tree based) is used as a main algorithm.
+The cross-validation is performed using the Random Forest and the bagging methods. 
+Having all outputs I compare predictions.</p>
+
+<h5>a) The Tree-based prediction model:</h5>
+
+<pre><code>library(rpart)
+m1 &lt;- rpart(classe ~ ., data = trainSet)
+library(rattle)
+fancyRpartPlot(m1)
+</code></pre>
+
+<p>The plot: 
+<img src="https://github.com/Lobodzinski/Machine_Learning/blob/master/TreeRplot_Fig1.png" alt=""/></p>
+
+<h5>b) The Random Forest prediction model:</h5>
+
+<pre><code>library(randomForest)
+m2 &lt;- randomForest(classe ~ ., data = trainSet, importance = T)
+m2
+plot(m2)
+</code></pre>
+
+<p><img src="https://github.com/Lobodzinski/Machine_Learning/blob/master/ForestRplot_Fig2.png" alt=""/></p>
+
+<p>The plot above shows the out-of-bag error vs number of trees.</p>
+
+<h5>c) The Bagging prediction model:</h5>
+
+<pre><code>library(ipred)
+m3 &lt;- bagging(classe ~ ., data = train2, coob = T)
+print(m3)
+
+Bagging classification trees with 25 bootstrap replications 
+
+Call: bagging.data.frame(formula = classe ~ ., data = train2, coob = T)
+
+Out-of-bag estimate of misclassification error:  0.0145 
+
+</code></pre>
+
+<h5>d) Comparison of the prediction methods:</h5>
+
+<pre><code>Tree &lt;- predict(m1, testSet, type = &quot;class&quot;)
+Forest &lt;- predict(m2, testSet)
+Bagging &lt;- predict(m3, testSet)
+</code></pre>
+
+<p>For comparison one can use the <code>confusionMatrix</code> and 
+the function <code>errorest</code> (from <code>ipred</code> package). In the last case be patient, 
+the <code>errorest</code> is a very long time consuming process. I show both error estimations.</p>
+
+<h6>confusionMatrix:</h6>
+
+<p>for the Tree-based method: </p>
+
+<pre><code>treeconf&lt;-confusionMatrix(Tree, testSet$classe)
+treeconf
+
+Confusion Matrix and Statistics
+
+          Reference
+Prediction    A    B    C    D    E
+         A 2024  256   82  151   52
+         B   71  923  148  116  144
+         C   69  169 1039  191  161
+         D   45  141   99  722   79
+         E   23   29    0  106 1006
+
+Overall Statistics
+
+               Accuracy : 0.7283
+                 95% CI : (0.7183, 0.7381)
+    No Information Rate : 0.2845
+    P-Value [Acc &gt; NIR] : &lt; 2.2e-16
+
+                  Kappa : 0.6544
+ Mcnemar&#39;s Test P-Value : &lt; 2.2e-16
+
+Statistics by Class:
+
+                     Class: A Class: B Class: C Class: D Class: E
+Sensitivity            0.9068   0.6080   0.7595  0.56143   0.6976
+Specificity            0.9036   0.9243   0.9089  0.94451   0.9753
+Pos Pred Value         0.7891   0.6583   0.6378  0.66483   0.8643
+Neg Pred Value         0.9606   0.9077   0.9471  0.91657   0.9348
+Prevalence             0.2845   0.1935   0.1744  0.16391   0.1838
+Detection Rate         0.2580   0.1176   0.1324  0.09202   0.1282
+Detection Prevalence   0.3269   0.1787   0.2076  0.13841   0.1484
+Balanced Accuracy      0.9052   0.7662   0.8342  0.75297   0.8365
+
+</code></pre>
+
+<p>for the Random Forest method:</p>
+
+<pre><code>forestconf&lt;-confusionMatrix(Forest, testSet$classe)
+forestconf
+
+Confusion Matrix and Statistics
+
+          Reference
+Prediction    A    B    C    D    E
+         A 2232    9    0    0    0
+         B    0 1505    8    0    0
+         C    0    4 1359   23    2
+         D    0    0    1 1263    2
+         E    0    0    0    0 1438
+
+Overall Statistics
+
+               Accuracy : 0.9938
+                 95% CI : (0.9918, 0.9954)
+    No Information Rate : 0.2845
+    P-Value [Acc &gt; NIR] : &lt; 2.2e-16
+
+                  Kappa : 0.9921
+ Mcnemar&#39;s Test P-Value : NA
+
+Statistics by Class:
+
+                     Class: A Class: B Class: C Class: D Class: E
+Sensitivity            1.0000   0.9914   0.9934   0.9821   0.9972
+Specificity            0.9984   0.9987   0.9955   0.9995   1.0000
+Pos Pred Value         0.9960   0.9947   0.9791   0.9976   1.0000
+Neg Pred Value         1.0000   0.9979   0.9986   0.9965   0.9994
+Prevalence             0.2845   0.1935   0.1744   0.1639   0.1838
+Detection Rate         0.2845   0.1918   0.1732   0.1610   0.1833
+Detection Prevalence   0.2856   0.1928   0.1769   0.1614   0.1833
+Balanced Accuracy      0.9992   0.9951   0.9945   0.9908   0.9986
+
+</code></pre>
+
+<p>for the Bagging method:</p>
+
+<pre><code>baggingconf&lt;-confusionMatrix(Bagging, testSet$classe)
+baggingconf
+
+Confusion Matrix and Statistics
+          Reference
+Prediction    A    B    C    D    E
+         A 2232    0    0    0    0
+         B    0 1518    0    0    0
+         C    0    0 1368    3    2
+         D    0    0    0 1283    0
+         E    0    0    0    0 1440
+
+Overall Statistics
+
+               Accuracy : 0.9994
+                 95% CI : (0.9985, 0.9998)
+    No Information Rate : 0.2845
+    P-Value [Acc &gt; NIR] : &lt; 2.2e-16
+
+                  Kappa : 0.9992
+ Mcnemar&#39;s Test P-Value : NA
+
+Statistics by Class:
+
+                     Class: A Class: B Class: C Class: D Class: E
+Sensitivity            1.0000   1.0000   1.0000   0.9977   0.9986
+Specificity            1.0000   1.0000   0.9992   1.0000   1.0000
+Pos Pred Value         1.0000   1.0000   0.9964   1.0000   1.0000
+Neg Pred Value         1.0000   1.0000   1.0000   0.9995   0.9997
+Prevalence             0.2845   0.1935   0.1744   0.1639   0.1838
+Detection Rate         0.2845   0.1935   0.1744   0.1635   0.1835
+Detection Prevalence   0.2845   0.1935   0.1750   0.1635   0.1835
+Balanced Accuracy      1.0000   1.0000   0.9996   0.9988   0.9993
+
+</code></pre>
+
+<p>So, we have:</p>
+
+<pre><code>        Accuracy:   
+
+Tree:       0.7283
+Forest:     0.9938
+Bagging:    0.9994
+</code></pre>
+
+<p>According to the <code>confusionMatrix</code>, the best prediction method is the <code>Bagging</code>. </p>
+
+<h6>errorest:</h6>
+
+<p>The check is started as:</p>
+
+<pre><code>mypredict.rpart &lt;- function(object, newdata) 
+{
+    predict(object, newdata = newdata, type = &quot;class&quot;)
+}
+
+errorestRes&lt;-c(Tree = errorest(classe ~ ., data = testSet, model = rpart, predict = mypredict.rpart)$error,
+Bagging = errorest(classe ~ ., data = testSet, model = bagging)$error,
+Forest = errorest(classe ~ ., data = testSet, model = randomForest)$error)
+
+      Tree    Bagging     Forest
+0.24751466 0.02702014 0.01261789
+</code></pre>
+
+<p>According to the <code>errorest</code> the better prediction algorithm is the <code>Forest Tree</code>. </p>
+
+<h4>3. what you think the expected out of sample error is / Conclusions:</h4>
+
+<p>Calculation of the <code>confusion Matrix</code> gives accuracy which points to the <code>Random Forest</code> prediction method as the best
+choice for the above task.
+However, according to the function <code>errorest</code>, the best prediction method is the <code>Bagging</code>.
+Using my knowledge I cannot distinguish which method is a proper one:
+the Random Forest or the Bagging. A more sophisticated check is necessary.
+So, I can only write, that the <code>Tree</code> prediction method shows the largest error and should not be used in this 
+kind of analysis.</p>
+
+<p>It is unclear to me how to use the testing data (from
+<a href="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv">https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv</a> ).
+It cannot be added to the testSet because the column &ldquo;classe&rdquo; is missing, therefore we cannot compare our predictions with 
+the testing data .</p>
+
+<h4>4. why you made the choices you did.</h4>
+
+<p>In terms of the selection of prediction methods, I decided to use the Random Tree and the Bagging algorithms 
+because both methods are used for analysis of the data in the source article [1]. 
+The Tree based prediction is used due to the lectures.  </p>
+
+<h3>References:</h3>
+
+<p>[1] Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H.
+&ldquo;Qualitative Activity Recognition of Weight Lifting Exercises.&rdquo;
+Proceedings of 4th International Conference in Cooperation with SIGCHI (Augmented Human &#39;13) . Stuttgart, Germany: ACM SIGCHI, 2013.</p>
+
+</body>
+
+</html>
