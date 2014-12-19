@@ -23,7 +23,8 @@ The data can be also find in the source of the project: http://groupware.les.inf
 
 
 ### Tools:
-according to the article [1] I use: 
+
+For analysis of the data [1] I use:
 
 A) Tree-based prediction method (CART)
 r-package: rpart
