@@ -1,6 +1,7 @@
-### 1. Introduction:
+### Introduction:
 
 Author: 		Bogdan Lobodzinski
+
 GitHub repo:		https://github.com/Lobodzinski/Machine_Learning
 
 description of the project:
