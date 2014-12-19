@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 
->>>>>>> 731018ddaf08c41f5ce6f80622ed00910193362b
 ### Introduction:
 
 Author: 		Bogdan Lobodzinski
