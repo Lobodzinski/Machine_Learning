@@ -23,10 +23,7 @@ The data can be also find in the source of the project: http://groupware.les.inf
 
 
 ### Tools:
-according to the article: 
-"Qualitative Activity Recognition of Weight Lifting Exercises" (Eduardo Velloso,
-Andreas Bulling, Hans Gellersen, Wallace Ugulino & Hugo Fuks)
-available on the URL: http://groupware.les.inf.puc-rio.br/har I use: 
+according to the article [1] I use: 
 
 A) Tree-based prediction method (CART)
 r-package: rpart
@@ -293,5 +290,6 @@ In addition, the Random Forest method is used for the alalysis in the source art
 [1] Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H.
 "Qualitative Activity Recognition of Weight Lifting Exercises."
 Proceedings of 4th International Conference in Cooperation with SIGCHI (Augmented Human '13) . Stuttgart, Germany: ACM SIGCHI, 2013.
+(available on http://groupware.les.inf.puc-rio.br/har)
 
 
