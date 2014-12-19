@@ -309,15 +309,15 @@ Forest = errorest(classe ~ ., data = testSet, model = randomForest)$error)
 0.24751466 0.02702014 0.01261789
 ```
 
-According to the `errorest` the better prediction algorithm is the Forest Tree. 
+According to the `errorest` the better prediction algorithm is the `Forest Tree`. 
 
 #### 3. what you think the expected out of sample error is / Conclusions:
-Calculation of the confusion Matrix gives accuracy which points to the Random Forest prediction method as the best
+Calculation of the `confusion Matrix` gives accuracy which points to the `Random Forest` prediction method as the best
 choice for the above task.
-However, according to the function `errorest` (from `ipred` package), the best prediction method is the Bagging.
+However, according to the function `errorest`, the best prediction method is the `Bagging`.
 Using my knowledge I cannot distinguish which method is a proper one:
 the Random Forest or the Bagging. A more sophisticated check is necessary.
-So, I can only write, that the Tree prediction method shows the largest error and should not be used in this 
+So, I can only write, that the `Tree` prediction method shows the largest error and should not be used in this 
 kind of analysis.
 
 It is unclear to me how to use the testing data (from
